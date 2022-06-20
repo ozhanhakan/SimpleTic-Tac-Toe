@@ -1,37 +1,40 @@
 package tictactoe
 
 fun main() {
-//    while (true) {
     print("Enter cells: ")
     val enterCells = readln().uppercase()
-    println("-".repeat(enterCells.length))
-    println(
-        """
-| ${enterCells[0]} ${enterCells[1]} ${enterCells[2]} |
-| ${enterCells[3]} ${enterCells[4]} ${enterCells[5]} |
-| ${enterCells[6]} ${enterCells[7]} ${enterCells[8]} |
-    """.trimIndent()
-    )
-    println("-".repeat(enterCells.length))
-    // stage 3/5 analyze
     val game = mutableListOf(
         mutableListOf(enterCells.substring(0, 1), enterCells.substring(1, 2), enterCells.substring(2, 3)),
         mutableListOf(enterCells.substring(3, 4), enterCells.substring(4, 5), enterCells.substring(5, 6)),
         mutableListOf(enterCells.substring(6, 7), enterCells.substring(7, 8), enterCells.substring(8, 9))
     )
-    println(findGameState(enterCells, game))
-/*
-    println(Math.abs((countChar(enterCells, "X") - countChar(enterCells, "O"))) > 1)
-    println(isWin(enterCells, game, "X") && isWin(enterCells, game, "O"))
-    println("countChar(enterCells, x):"+countChar(enterCells, "X"))
-    println("countChar(enterCells, o):"+countChar(enterCells, "O"))*/
-    /*println(game2D.size)
-println(game2D)
-println(game2D[0].size)
-println(game2D[0])
-println(game2D[game2D.lastIndex].size)
-println(game2D[game2D.lastIndex])*/
-    // }
+    showTable(game)
+    while (true) {
+        print("Enter the coordinates: ")
+        val (row, col) = readln().split(" ")
+        if (!"0123456789".contains(row) || !"0123456789".contains(col)) {
+            println("You should enter numbers!")
+            continue
+        }
+        val x = row.toInt()
+        val y = col.toInt()
+        if (x !in 1..3 || y !in 1..3) {
+            println("Coordinates should be from 1 to 3!")
+            continue
+        }
+
+        if (game[x - 1][y - 1] == "X" || game[x - 1][y - 1] == "O") {
+            println("This cell is occupied! Choose another one!")
+            continue
+        }
+        //println("$x, $y")
+        game[x - 1][y - 1] = "X"
+        showTable(game)
+        //println("game[x - 1][y - 1]: " + game[x - 1][y - 1])
+
+        // println(findGameState(enterCells, game))
+        break
+    }
 }
 
 fun findGameState(enterCells: String, game: MutableList<MutableList<String>>): String {
@@ -43,6 +46,18 @@ fun findGameState(enterCells: String, game: MutableList<MutableList<String>>): S
         isGameLast(enterCells, game) -> "Game not finished"
         else -> "BugBuBug"
     }
+}
+
+fun showTable(game: MutableList<MutableList<String>>) {
+    println("-".repeat(9))
+    println(
+        """
+| ${game[0][0]} ${game[0][1]} ${game[0][2]} |
+| ${game[1][0]} ${game[1][1]} ${game[1][2]} |
+| ${game[2][0]} ${game[2][1]} ${game[2][2]} |
+    """.trimIndent()
+    )
+    println("-".repeat(9))
 }
 
 fun isGameLast(enterCells: String, game: MutableList<MutableList<String>>): Boolean {
@@ -86,24 +101,17 @@ fun oWins(enterCells: String, game: MutableList<MutableList<String>>): Boolean {
 }
 
 fun impossible(enterCells: String, game: MutableList<MutableList<String>>): Boolean {
-
     val noTwoWinner = isWin(enterCells, game, "X") && isWin(enterCells, game, "O")
     val noMoreTry = Math.abs((countChar(enterCells, "X") - countChar(enterCells, "O"))) > 1
-    /* println("noTwoWinner: " + noTwoWinner)
-     println("noMoreTry: " + noMoreTry)*/
     return noMoreTry || noTwoWinner
-
 }
 
 fun isWin(enterCells: String, game: MutableList<MutableList<String>>, player: String): Boolean {
-    // row control
-
     var countColumn0 = 0
     var countColumn1 = 0
     var countColumn2 = 0
     var countXdiag1 = 0
     var countXdiag2 = 0
-
     for (i in 0 until game.size) {
         var countXrow = 0
         for (j in 0 until game.first().size) {
@@ -140,58 +148,5 @@ fun isWin(enterCells: String, game: MutableList<MutableList<String>>, player: St
             if (countColumn2 == 3) return true
         }
     }
-
     return false
 }
-
-/*
-// test grids
-// row0
- if ((game[0][0] == "X" || game[0][0] == "x") &&
-     (game[0][1] == "X" || game[0][1] == "x") &&
-     (game[0][2] == "X" || game[0][2] == "x")) {
-     return true
- }
- // row1
- if ((game[1][0] == "X" || game[1][0] == "x") &&
-     (game[1][1] == "X" || game[1][1] == "x") &&
-     (game[1][2] == "X" || game[1][2] == "x")) {
-     return true
- }
- // row2
- if ((game[2][0] == "X" || game[2][0] == "x") &&
-     (game[2][1] == "X" || game[2][1] == "x") &&
-     (game[2][2] == "X" || game[2][2] == "x")) {
-     return true
- }
- // column0 ok
- if ((game[0][0] == "X" || game[0][0] == "x") &&
-     (game[1][0] == "X" || game[1][0] == "x") &&
-     (game[2][0] == "X" || game[2][0] == "x")) {
-     return true
- }
- // column1
- if ((game[0][1] == "X" || game[0][1] == "x") &&
-     (game[1][1] == "X" || game[1][1] == "x") &&
-     (game[2][1] == "X" || game[2][1] == "x")) {
-     return true
- }
- // column2
- if ((game[0][2] == "X" || game[0][2] == "x") &&
-     (game[1][2] == "X" || game[1][2] == "x") &&
-     (game[2][2] == "X" || game[2][2] == "x")) {
-     return true
- }
-
- // diag1 ok
- if ((game[0][0] == "X" || game[0][0] == "x") &&
-     (game[1][1] == "X" || game[1][1] == "x") &&
-     (game[2][2] == "X" || game[2][2] == "x")) {
-     return true
- }
- // diag2 ok
- if ((game[0][2] == "X" || game[0][2] == "x") &&
-     (game[1][1] == "X" || game[1][1] == "x") &&
-     (game[2][0] == "X" || game[2][0] == "x")) {
-     return true
- }*/
