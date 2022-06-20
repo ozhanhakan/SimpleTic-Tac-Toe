@@ -1,14 +1,15 @@
 package tictactoe
 
 fun main() {
-    print("Enter cells: ")
-    val enterCells = readln().uppercase()
+    // print("Enter cells: ")
+    var enterCells = "         "
     val game = mutableListOf(
         mutableListOf(enterCells.substring(0, 1), enterCells.substring(1, 2), enterCells.substring(2, 3)),
         mutableListOf(enterCells.substring(3, 4), enterCells.substring(4, 5), enterCells.substring(5, 6)),
         mutableListOf(enterCells.substring(6, 7), enterCells.substring(7, 8), enterCells.substring(8, 9))
     )
     showTable(game)
+    var user = "X"
     while (true) {
         print("Enter the coordinates: ")
         val (row, col) = readln().split(" ")
@@ -28,11 +29,18 @@ fun main() {
             continue
         }
         //println("$x, $y")
-        game[x - 1][y - 1] = "X"
+        game[x - 1][y - 1] = user
+        enterCells = ""
+        for (i in 0..2) {
+            for (j in 0..2) {
+                enterCells += game[i][j]
+            }
+        }
+        if (user == "O") user = "X" else user = "O"
         showTable(game)
-        //println("game[x - 1][y - 1]: " + game[x - 1][y - 1])
-
-        // println(findGameState(enterCells, game))
+        if (isGameLast(enterCells, game) && !xWins(enterCells, game) && !oWins(enterCells, game)) continue else println(
+            findGameState(enterCells, game)
+        )
         break
     }
 }
@@ -62,8 +70,10 @@ fun showTable(game: MutableList<MutableList<String>>) {
 
 fun isGameLast(enterCells: String, game: MutableList<MutableList<String>>): Boolean {
     var gameLast = false
-    if ((enterCells.contains("_") || enterCells.contains(" ")) &&
-        (!xWins(enterCells, game) || !oWins(enterCells, game))
+    if ((enterCells.contains("_") || enterCells.contains(" ")) && (!xWins(enterCells, game) || !oWins(
+            enterCells,
+            game
+        ))
     ) {
         gameLast = true
     }
@@ -86,10 +96,7 @@ fun countChar(s: String, ch: String, ignoreCase: Boolean = true): Int {
 }
 
 fun draw(enterCells: String, game: MutableList<MutableList<String>>): Boolean {
-    return (!isWin(enterCells, game, "O") &&
-            !isWin(enterCells, game, "X") &&
-            !isGameLast(enterCells, game)
-            )
+    return (!isWin(enterCells, game, "O") && !isWin(enterCells, game, "X") && !isGameLast(enterCells, game))
 }
 
 fun xWins(enterCells: String, game: MutableList<MutableList<String>>): Boolean {
